@@ -1,0 +1,13 @@
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\bin\Debug\netcoreapp3.1\Basics.exe
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\bin\Debug\netcoreapp3.1\Basics.deps.json
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\bin\Debug\netcoreapp3.1\Basics.runtimeconfig.json
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\bin\Debug\netcoreapp3.1\Basics.runtimeconfig.dev.json
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\bin\Debug\netcoreapp3.1\Basics.dll
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\bin\Debug\netcoreapp3.1\Basics.pdb
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\obj\Debug\netcoreapp3.1\Basics.csprojAssemblyReference.cache
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\obj\Debug\netcoreapp3.1\Basics.AssemblyInfoInputs.cache
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\obj\Debug\netcoreapp3.1\Basics.AssemblyInfo.cs
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\obj\Debug\netcoreapp3.1\Basics.csproj.CoreCompileInputs.cache
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\obj\Debug\netcoreapp3.1\Basics.dll
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\obj\Debug\netcoreapp3.1\Basics.pdb
+C:\Users\martinharamburu\Documents\GitHub\cs8dotnetcore3\Chapter02\basics\obj\Debug\netcoreapp3.1\Basics.genruntimeconfig.cache
