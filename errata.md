@@ -1,4 +1,5 @@
 # Errata
+If you find any mistakes in the fourth edition, C# 8.0 and .NET Core 3.0, then please raise an issue in this repository or email me at markjprice (at) gmail.com. All of the errata listed below have been corrected for the fifth edition.
 ## Page 14 - Comparing .NET technologies
 In the table row for Xamarin, the description should be "Mobile _and desktop_ apps only."
 ## Page 30 - Discovering your C# compiler versions
@@ -8,11 +9,102 @@ In the first paragraph, the second sentence:
 "This method waits for the user to type some text, then as soon as the user presses Enter, whatever the user has typed is returned as a `string` value."
 Should be:
 "This method waits for the user to press a key or key combination that is then returned as a `ConsoleKeyInfo` value."
+## Page 84 - Pattern matching with the switch statement
+In Step 2, you write code to open a file and then branch depending on its properties, for example to show if it is readonly or writeable. Since the code to open the file always uses the default of read/write, then the switch statement will always use the first branch indicating that it is writeable. It will never be readonly or a memory stream or use the default branchg or be null.
+
+If you manually change the file in your filesystem to be readonly and run the code again, then the file open code throws an exception unless you change the code to open the file readonly.
+
+To make the example code a little more interesting but still very artificial, then modify the statements as shown in the following code:
+```
+string path = "/Users/markjprice/Code/Chapter03";
+// string path = @"C:\Code\Chapter03";
+
+Write("Press R for readonly or W for write: ");
+ConsoleKeyInfo key = ReadKey();
+WriteLine();
+
+Stream s = null;
+
+if (key.Key == ConsoleKey.R)
+{
+  s = File.Open(
+    Path.Combine(path, "file.txt"),
+    FileMode.OpenOrCreate,
+    FileAccess.Read);
+}
+else
+{
+  s = File.Open(
+    Path.Combine(path, "file.txt"),
+    FileMode.OpenOrCreate,
+    FileAccess.Write);
+}
+
+string message = string.Empty;
+
+switch (s)
+{
+  case FileStream writeableFile when s.CanWrite:
+    message = "The stream is a file that I can write to.";
+    break;
+  case FileStream readOnlyFile:
+    message = "The stream is a read-only file.";
+    break;
+  case MemoryStream ms:
+    message = "The stream is a memory address.";
+    break;
+  default: // always evaluated last despite its current position
+    message = "The stream is some other type.";
+    break;
+  case null:
+    message = "The stream is null.";
+    break;
+}
+
+WriteLine(message);
+```
 ## Page 114 - Writing a function that returns a value
 In Step 2, the code block calls a method named `RunSalesTax`. The method name should be `RunCalculateTax`:
 ```
 // RunTimesTable();
 RunCalculateTax();
+```
+## Page 117 - Calculating factorials with recursion
+In Step 1, the `Factorial` function does not check for overflows and the `RunFactorial` function prompts the user to enter a number and then calculates its factorial. This led me to incorrectly state that the `Factorial` function overflows when passed integers of 32 or higher when it will actually overflow when passed integers of 13 or higher. Improved implementations of the two functions that illustrate this are shown in the following code: 
+```
+static int Factorial(int number)
+{
+  if (number < 1)
+  {
+    return 0;
+  }
+  else if (number == 1)
+  {
+    return 1;
+  }
+  else
+  {
+    checked // for overflow
+    {
+      return number * Factorial(number - 1);
+    }
+  }
+}
+
+static void RunFactorial()
+{
+  for (int i = 1; i < 15; i++)
+  {
+    try
+    {
+      WriteLine($"{i}! = {Factorial(i):N0}");
+    }
+    catch (System.OverflowException)
+    {
+      WriteLine($"{i}! is too big for a 32-bit integer.");
+    }
+  }
+}
 ```
 ## Page 203 - Managing memory with reference and value types
 In the second paragraph, the phrase "first-in, first-out" should be "last-in, first-out".
@@ -75,6 +167,54 @@ A more efficient "fix" would be to specify in the `Northwind` database context c
 modelBuilder.Entity<Product>()
   .Property(product => product.Cost)
   .HasConversion<double>();
+```
+## Page 407 - Building an EF Core model
+This is the same issue as on Page 375 above. To fix it, in Step 2, add an OnModelCreating method, as shown in the following code:
+```
+protected override void OnModelCreating(
+  ModelBuilder modelBuilder)
+{
+  modelBuilder.Entity<Product>()
+    .Property(product => product.UnitPrice)
+    .HasConversion<double>();
+}
+```
+## Page 423 - Creating your own LINQ extension methods
+In Step 2, the logic for the `Mode` method is wrong. Since we sort by default in ascending order, the most frequent number will be last but in the book code we return the first item. We could fix this by calling `LastOrDefault`, but when debugging it is easiest if the data we are interested in appear at the top of the results, so the best way to fix this is to sort in descending order, as shown in the following code:
+```
+public static int? Mode(this IEnumerable<int?> sequence)
+{
+  var grouped = sequence.GroupBy(item => item);
+  var orderedGroups = grouped.OrderByDescending(group => group.Count());
+  return orderedGroups.FirstOrDefault().Key;
+}
+```
+And:
+```
+public static decimal? Mode(this IEnumerable<decimal?> sequence)
+{
+  var grouped = sequence.GroupBy(item => item);
+  var orderedGroups = grouped.OrderByDescending(group => group.Count());
+  return orderedGroups.FirstOrDefault().Key;
+}
+```
+## Page 454 - Working with async streams
+The original code used `System.Threading.Thread.Sleep` method which blocks the thread. Using `Task.Delay` method instead allows thread to execute asynchronously.
+```
+async static IAsyncEnumerable<int> GetNumbers()
+{
+  var r = new Random();
+
+  // simulate work
+  await Task.Run(() => Task.Delay(r.Next(1500, 3000)));
+  yield return r.Next(0, 101);
+
+  await Task.Run(() => Task.Delay(r.Next(1500, 3000)));
+  yield return r.Next(0, 101);
+
+  await Task.Run(() => Task.Delay(r.Next(1500, 3000)));
+  yield return r.Next(0, 101);
+}
 ```
 ## Page 503 - Using Razor class libraries
 In Step 7, if the `Areas` and `MyFeature` folders are missing, then that is caused by an errata in Step 4, where the command: 
