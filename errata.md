@@ -1,9 +1,74 @@
 # Errata
-If you find any mistakes in the fourth edition, C# 8.0 and .NET Core 3.0, then please raise an issue in this repository or email me at markjprice (at) gmail.com. All of the errata listed below have been corrected for the fifth edition.
+If you find any mistakes in the fourth edition, C# 8.0 and .NET Core 3.0, then please raise an issue in this repository or email me at markjprice (at) gmail.com. All of the errata listed below have been corrected in the [fifth edition](https://github.com/markjprice/cs9dotnet5).
 ## Page 14 - Comparing .NET technologies
 In the table row for Xamarin, the description should be "Mobile _and desktop_ apps only."
 ## Page 30 - Discovering your C# compiler versions
-In Step 5, the command `csc -langversion:?` works on macOS but on Windows it returns the error `The name "csc" is not recognized as the name of a command, function, script file, or executable program. Check the spelling of the name, as well as the presence and correctness of the path.` To fix this issue, use the following link: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/command-line-building-with-csc-exe
+In steps 5 and 6, I show the C# compiler (csc) command listing the supported language versions on macOS. I regret including steps 5 and 6 because they cause some readers problems without adding any real value because the csc command is never used again. In the next edition I will remove steps 5 and 6. I recommend that readers skip over steps 5 and 6.
+
+In Step 5, the command `csc -langversion:?` shoyld work on macOS but on Windows it returns the error `The name "csc" is not recognized as the name of a command, function, script file, or executable program. Check the spelling of the name, as well as the presence and correctness of the path.` To fix this issue, use the following link: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/command-line-building-with-csc-exe
+
+## Page 47 - Comparing double and decimal types
+
+In the book, I say that the `double` type has some special static members, including one named `Infinity`. This is wrong. There are two members named `PositiveInfinity` and `NegativeInfinity`.
+
+## Page 47 - Using Visual Studio Code workspaces
+
+The book says, "Visual Studio has a feature called workspaces that enables this." It should have said, "Visual Studio **Code** has a feature called workspaces that enables this."
+
+## Page 49 - Storing dynamic types
+
+In the code example, I show assigning a `string` value to a dynamically-typed variable, as shown in the following code:
+```
+// storing a string in a dynamic object
+dynamic anotherName = "Ahmed";
+
+// this compiles but would throw an exception at run-time
+// if you later store a data type that does not have a 
+// property named Length
+int length = anotherName.Length;
+```
+
+The above example code does not throw an exception because at the time we get the `Length` property, the value stored in `anotherName` is a `string` which does have a `Length` property.
+
+The example would have been clearer if I had shown some examples of assigning values with other data types that do and do not have a `Length` property, as shown in the following code:
+
+```
+// storing a string in a dynamic object
+// string has a Length property
+dynamic anotherName = "Ahmed";
+
+// int does not have a Length property
+anotherName = 12;
+
+// an array of any type has a Length property
+// anotherName = new[] { 3, 5, 7 };
+
+// this compiles but would throw an exception at run-time
+// if you had stored a value with a data type that does not 
+// have a property named Length
+int length = anotherName.Length;
+```
+
+The above example code does throw an exception because at the time we get the `Length` property, the value stored in `anotherName` is an `int` which does not have a `Length` property, as shown in the following output:
+
+```
+Unhandled exception. Microsoft.CSharp.RuntimeBinder.RuntimeBinderException: 'int' does not contain a definition for 'Length'
+   at CallSite.Target(Closure , CallSite , Object )
+   at System.Dynamic.UpdateDelegates.UpdateAndExecute1[T0,TRet](CallSite site, T0 arg0)
+   at Variables.Program.Main(String[] args) in /Users/markjprice/Code/Chapter02/Variables/Program.cs:line 34
+```
+
+If you uncomment the statement that assigns an array of `int` values, then the code works without throwing an exception because all arrays have a `Length` property.
+
+## Page 58 - Exploring console applications further
+The command line example of passing arguments used `-name`, as shown in the following command:
+```
+dotnet new console -lang "F#" -name "ExploringConsole"
+```
+But it should use `--name`, as shown in the following command:
+```
+dotnet new console -lang "F#" --name "ExploringConsole"
+```
 ## Page 63 - Getting key input from the user
 In the first paragraph, the second sentence:
 "This method waits for the user to type some text, then as soon as the user presses Enter, whatever the user has typed is returned as a `string` value."
@@ -63,6 +128,9 @@ switch (s)
 
 WriteLine(message);
 ```
+## Page 113 - Writing a function that returns a value
+The `switch case` value of `ME` is commented as Maryland. `ME` is the abbreviation for Maine.
+
 ## Page 114 - Writing a function that returns a value
 In Step 2, the code block calls a method named `RunSalesTax`. The method name should be `RunCalculateTax`:
 ```
@@ -106,6 +174,8 @@ static void RunFactorial()
   }
 }
 ```
+## Page 154 - Storing multiple values using an enum type
+The table that represents a byte on this page should not have a zero column.
 ## Page 203 - Managing memory with reference and value types
 In the second paragraph, the phrase "first-in, first-out" should be "last-in, first-out".
 ## Page 217 - Inheriting exceptions
@@ -137,6 +207,48 @@ Assembly = Assembly.GetEntryAssembly();
 To:
 ```
 Assembly assembly = Assembly.GetEntryAssembly();
+```
+
+## Page 309 - Compressing streams
+
+In Step 2, I say, `GZipSteam`. It should say, `GZipStream`.
+
+## Pages 338 to 340 - Encrypting symmetrically with AES
+
+The code uses 2000 iterations for PBKDF2 and I said this is "double the recommended salt size and iteration count". I first wrote that code and statement in the fall of 2015 for the first edition and I have neglected to keep it updated. More than five years later, 2000 is not enough! 
+
+To avoid updating the value every edition, what I will say in the sixth edition is that the best iteration count for PBKDF2 is whatever number takes about 100ms on the target machine. Now that anyone can buy a $699 Apple Mac mini with amazing performance, that recommendation could be closer to 100,000 iterations. And that value will only increase as time passes. 
+
+As I said on page 334, "If security is important to you (and it should be!), then hire an experienced security expert for guidance rather than relying on advice found online." Or in a generalist programming book.
+
+## Page 339 - Hashing with the commonly used SHA256
+To make it easier to complete Exercise 10.3, I have split the `CheckPassword` method into two overloaded methods, as shown in the following code:
+```
+// check a user's password that is stored
+// in the private static dictionary Users
+public static bool CheckPassword(string username, string password)
+{
+  if (!Users.ContainsKey(username))
+  {
+    return false;
+  }
+
+  var user = Users[username];
+
+  return CheckPassword(username, password, 
+    user.Salt, user.SaltedHashedPassword);
+}
+
+// check a user's password using salt and hashed password
+public static bool CheckPassword(string username, string password, 
+  string salt, string hashedPassword)
+{
+  // re-generate the salted and hashed password 
+  var saltedhashedPassword = SaltAndHashPassword(
+    password, salt);
+
+  return (saltedhashedPassword == hashedPassword);
+}
 ```
 ## Page 363 - Creating the Northwind sample database for SQLite
 - In Step 2, I say to download the SQL script. It is easier if you have created a local Git repository as explained in Chapter 1. Then you can simply copy the SQL script file from your local repository folder.
@@ -178,6 +290,18 @@ protected override void OnModelCreating(
     .Property(product => product.UnitPrice)
     .HasConversion<double>();
 }
+```
+## Page 412 - Joining and grouping sequences
+In Step 1, the query does not specify a sort order. The old behavior sorted by category (as described in the book) but the current behavior sorts by product. To sort by category, add a call to `OrderBy` at the end of the query, as shown in the following code:
+```
+// join every product to its category to return 77 matches 
+var queryJoin = db.Categories.Join(
+  inner: db.Products,
+  outerKeySelector: category => category.CategoryID, 
+  innerKeySelector: product => product.CategoryID, 
+  resultSelector: (c, p) =>
+    new { c.CategoryName, p.ProductName, p.ProductID })
+  .OrderBy(cp => cp.CategoryName);
 ```
 ## Page 423 - Creating your own LINQ extension methods
 In Step 2, the logic for the `Mode` method is wrong. Since we sort by default in ascending order, the most frequent number will be last but in the book code we return the first item. We could fix this by calling `LastOrDefault`, but when debugging it is easiest if the data we are interested in appear at the top of the results, so the best way to fix this is to sort in descending order, as shown in the following code:
